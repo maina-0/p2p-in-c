@@ -11,13 +11,12 @@ struct client
     int protocol;
     unsigned long interface;
     int port;
-    int backlog;
     int socket;
-    struct sockaddr_in address;
+    char *(*request)(struct Client *client, char *server_ip, char *request);
 
 };
 
-struct client client_constructor(int domain,int service,int protocol,unsigned long interface,int port,int backlog);
+struct client client_constructor(int domain,int service,int protocol,int port,unsigned long interface);
 
 
 #endif //CLIENT_H

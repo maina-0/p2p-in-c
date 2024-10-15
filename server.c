@@ -17,6 +17,7 @@ struct server server_constructor(int domain, int service, int protocol, unsigned
     new_server.interface = interface;//ip
     new_server.port = port;
     new_server.backlog = backlog;
+    new_server.socket=socket(new_server.domain,new_server.service,new_server.protocol);
    // new_server.socketfd = socketfd;
     
 
@@ -31,22 +32,21 @@ struct server server_constructor(int domain, int service, int protocol, unsigned
     
 
     int socketfd; 
-    socketfd=socket(new_server.domain,new_server.service,new_server.protocol);
 
-    if(socketfd<0){
+    if(new_server.socket<0){
         perror("err creating socket;");
         exit(1);
     }
-        printf("socketfd is %i\n",socketfd);
+        printf("socketfd is %i\n",new_server.socket);
     
 
-    if (bind(socketfd,(struct sockaddr *)&new_server.address,sizeof(new_server.address))){
+    if (bind(new_server.socket,(struct sockaddr *)&new_server.address,sizeof(new_server.address))){
         perror("err binding port to ip;");
         exit(1);
     }
     printf("binding successful, listening port %i\n",new_server.port);
 
-    if(listen(socketfd,new_server.backlog)<0){
+    if(listen(new_server.socket,new_server.backlog)<0){
         perror("err listening on port;");
         exit(1);
 
@@ -59,21 +59,16 @@ struct server server_constructor(int domain, int service, int protocol, unsigned
 
 
 
-    int clientFD=accept(socketfd,(struct sockaddr *)&clientaddr,&addrsize);//alternatively in the last argument give pointer
+    int clientFD=accept(new_server.socket,(struct sockaddr *)&clientaddr,&addrsize);//alternatively in the last argument give pointer
     
     char buffer[1024];
     
     while(true){ 
 
     ssize_t amntrecv=recv(clientFD,buffer,1024,0);
-
-
-    if (amntrecv>0){
+        if (amntrecv>0){
             buffer[amntrecv]=0;
-            printf("-------------\n");
             printf("%s \n",buffer);
-            printf("-------------\n");
-        
         }
 
         if (amntrecv==0){
@@ -83,7 +78,7 @@ struct server server_constructor(int domain, int service, int protocol, unsigned
     }   
 
     close(clientFD);
-    shutdown(socketfd,SHUT_RDWR);
+    shutdown(new_server.socket,SHUT_RDWR);
 
     return new_server;
 }

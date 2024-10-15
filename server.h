@@ -12,7 +12,7 @@ struct server
     unsigned long interface;
     int port;
     int backlog;
-   // int socketfd;
+    int socket;
     struct sockaddr_in address;
 
 };
