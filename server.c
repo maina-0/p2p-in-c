@@ -18,14 +18,6 @@ struct server server_constructor(int domain, int service, int protocol, unsigned
     new_server.port = port;
     new_server.backlog = backlog;
     new_server.socket=socket(new_server.domain,new_server.service,new_server.protocol);
-   // new_server.socketfd = socketfd;
-    
-
-
-    
-
-    
-  //  memset(&new_server.address, 0, sizeof(new_server.address));
     new_server.address.sin_family = domain; 
     new_server.address.sin_addr.s_addr = htonl(interface); 
     new_server.address.sin_port = htons(port);
